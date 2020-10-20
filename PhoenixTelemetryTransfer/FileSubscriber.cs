@@ -59,6 +59,11 @@
 
         private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
+            this.ReadFile();
+        }
+
+        public void ReadFile()
+        {
             if (File.Exists(this.path))
             {
                 var inputText = File.ReadAllText(this.path);
