@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29926.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoenixTelemetryTransfer", "PhoenixTelemetryTransfer.csproj", "{CAB9F1D6-7528-4EAD-BADD-18F333A24056}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAB9F1D6-7528-4EAD-BADD-18F333A24056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB9F1D6-7528-4EAD-BADD-18F333A24056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB9F1D6-7528-4EAD-BADD-18F333A24056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB9F1D6-7528-4EAD-BADD-18F333A24056}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A53AE9A-B83C-4BEE-AE35-2BF93BECC8D7}
+	EndGlobalSection
+EndGlobal
