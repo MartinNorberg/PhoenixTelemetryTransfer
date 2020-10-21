@@ -39,7 +39,7 @@
             this.Path = ConfigurationManager.AppSettings["Path"].ToString();
         }
 
-        private  void UpdateSetting(string key, string value)
+        private void UpdateSetting(string key, string value)
         {
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             configuration.AppSettings.Settings[key].Value = value;
@@ -68,6 +68,8 @@
         public ICommand StartCommand { get; }
 
         public ObservableCollection<Exception> Exceptions { get; } = new ObservableCollection<Exception>();
+
+        public ObservableCollection<Channel> Channels { get; } = new ObservableCollection<Channel>();
 
         public void TryCatch(Action action)
         {

@@ -37,7 +37,9 @@
                 Content="..." />
         </StackPanel>
         <TabControl Grid.Row="1" Background="HotPink">
-            <TabItem Header="Channels" />
+            <TabItem Header="Channels">
+                <DataGrid ItemsSource="{Binding Channels}" />
+            </TabItem>
             <TabItem Header="Config" />
             <TabItem Header="Exceptions">
                 <DataGrid ItemsSource="{Binding Exceptions}" />
