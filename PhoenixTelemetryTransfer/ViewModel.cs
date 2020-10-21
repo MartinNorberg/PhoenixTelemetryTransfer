@@ -6,6 +6,7 @@
     using System.Runtime.CompilerServices;
     using Ookii.Dialogs.Wpf;
     using System.Windows.Input;
+    using System.Configuration;
 
     public class ViewModel: INotifyPropertyChanged
     {
@@ -15,6 +16,7 @@
 
         public ViewModel()
         {
+            this.TryCatch(() => this.LoadConfig());
             this.BrowseCommand = new RelayCommand(_ => this.TryCatch(() => this.BrowsePath()));
         }
 
@@ -28,7 +30,22 @@
             {
                 this.path = dialog.SelectedPath;
                 this.OnPropertyChanged(nameof(this.Path));
+                this.UpdateSetting("Path", this.Path);
             }
+        }
+
+        private void LoadConfig()
+        {
+            this.Path = ConfigurationManager.AppSettings["Path"].ToString();
+        }
+
+        private  void UpdateSetting(string key, string value)
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save();
+
+            ConfigurationManager.RefreshSection("appSettings");
         }
 
         public string Path
