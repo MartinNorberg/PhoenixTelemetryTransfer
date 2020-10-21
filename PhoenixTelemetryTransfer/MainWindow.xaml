@@ -39,7 +39,9 @@
         <TabControl Grid.Row="1" Background="HotPink">
             <TabItem Header="Channels" />
             <TabItem Header="Config" />
-            <TabItem Header="Exceptions" />
+            <TabItem Header="Exceptions">
+                <DataGrid ItemsSource="{Binding Exceptions}" />
+            </TabItem>
         </TabControl>
     </Grid>
 
