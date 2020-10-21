@@ -21,20 +21,29 @@
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Label VerticalAlignment="Center">Path</Label>
-            <TextBlock
-                Grid.Row="0"
-                Width="100"
-                Height="25"
-                HorizontalAlignment="Left"
-                Background="White"
-                Text="{Binding Path}" />
-            <Button
-                Width="25"
-                Height="25"
-                Command="{Binding BrowseCommand}"
-                Content="..." />
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label VerticalAlignment="Center">Path</Label>
+                <TextBlock
+                    Grid.Row="0"
+                    Width="100"
+                    Height="25"
+                    HorizontalAlignment="Left"
+                    Background="White"
+                    Text="{Binding Path}" />
+                <Button
+                    Width="25"
+                    Height="25"
+                    Command="{Binding BrowseCommand}"
+                    Content="..." />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>No channels</Label>
+                <ComboBox
+                    ItemsSource="{Binding NoChannels}"
+                    SelectedValue="{Binding SelectedNoChannels}"
+                    SelectionChanged="ComboBox_SelectionChanged" />
+            </StackPanel>
         </StackPanel>
         <TabControl Grid.Row="1" Background="HotPink">
             <TabItem Header="Channels">
