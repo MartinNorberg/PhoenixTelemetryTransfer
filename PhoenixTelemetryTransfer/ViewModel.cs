@@ -1,22 +1,34 @@
 ﻿namespace PhoenixTelemetryTransfer
 {
     using System;
-    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.Linq;
     using System.Runtime.CompilerServices;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Ookii.Dialogs.Wpf;
     using System.Windows.Input;
 
     public class ViewModel: INotifyPropertyChanged
     {
         private string path;
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ViewModel()
         {
+            this.BrowseCommand = new RelayCommand(_ => this.TryCatch(() => this.BrowsePath()));
+        }
+
+        private void BrowsePath()
+        {
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.Description = "Please select a folder.";
+            dialog.UseDescriptionForTitle = true;
+
+            if ((bool)dialog.ShowDialog())
+            {
+                this.path = dialog.SelectedPath;
+                this.OnPropertyChanged(nameof(this.Path));
+            }
         }
 
         public string Path
@@ -37,6 +49,20 @@
         public ICommand BrowseCommand { get; }
 
         public ICommand StartCommand { get; }
+
+        public ObservableCollection<Exception> Exceptions { get; } = new ObservableCollection<Exception>();
+
+        public void TryCatch(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                this.Exceptions.Add(e);
+            }
+        }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
