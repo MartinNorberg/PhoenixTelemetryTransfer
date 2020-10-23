@@ -60,6 +60,14 @@
         private void LoadConfig()
         {
             this.Path = ConfigurationManager.AppSettings["Path"].ToString();
+            if (int.TryParse(ConfigurationManager.AppSettings["NoChannels"].ToString(), out var savedNoChannels))
+            {
+                this.SelectedNoChannels = savedNoChannels;
+            }
+            else
+            {
+                this.SelectedNoChannels = 0;
+            }
         }
 
         private void UpdateSetting(string key, string value)
@@ -127,6 +135,7 @@
 
         private void SelectedNoChannelsChanged()
         {
+            this.UpdateSetting("NoChannels", this.selectedNoChannel.ToString());
             if (this.channels.Count == 0)
             {
                 for (int i = 1; i <= this.selectedNoChannel; i++)
@@ -139,7 +148,7 @@
             else if (this.channels.Count > this.selectedNoChannel)
             {
                 var channelsToRemove = this.channels.Count - this.selectedNoChannel;
-                
+
                 for (int i = 1; i <= channelsToRemove; i++)
                 {
                     this.channels.RemoveAt(this.channels.Count-1);
