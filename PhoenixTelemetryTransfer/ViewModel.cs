@@ -68,6 +68,22 @@
             {
                 this.SelectedNoChannels = 0;
             }
+
+            for (int i = 1; i <= this.SelectedNoChannels; i++)
+            {
+                var channelName = $"Channel{i}";
+                var name = ConfigurationManager.AppSettings[$"Channel{i}Name"].ToString();
+                var tag = ConfigurationManager.AppSettings[$"Channel{i}OpcTag"].ToString();
+
+                foreach (var item in this.channels)
+                {
+                    if (item.ChannelName == channelName)
+                    {
+                        item.Name = name;
+                        item.Tag = tag;
+                    }
+                }
+            }
         }
 
         private void UpdateSetting(string key, string value)
@@ -115,8 +131,8 @@
             }
         }
 
-        public int SelectedNoChannels 
-        { 
+        public int SelectedNoChannels
+        {
             get => this.selectedNoChannel;
             set
             {
@@ -124,7 +140,7 @@
                 {
                     return;
                 }
-                
+
                 this.selectedNoChannel = value;
                 this.OnPropertyChanged();
 
@@ -136,9 +152,11 @@
         private void SelectedNoChannelsChanged()
         {
             this.UpdateSetting("NoChannels", this.selectedNoChannel.ToString());
-            if (this.channels.Count == 0)
+            var noChannels = this.channels.Count;
+
+            if (noChannels < this.selectedNoChannel)
             {
-                for (int i = 1; i <= this.selectedNoChannel; i++)
+                for (int i = noChannels + 1; i <= this.selectedNoChannel; i++)
                 {
                     var newChannel = new Channel();
                     newChannel.ChannelName = $"Channel{i}";
@@ -154,6 +172,8 @@
                     this.channels.RemoveAt(this.channels.Count-1);
                 }
             }
+
+            this.LoadConfig();
         }
 
         public void TryCatch(Action action)
