@@ -67,30 +67,39 @@
             if (File.Exists(this.path))
             {
                 var inputText = File.ReadAllText(this.path);
-                var inputArray = inputText.Split(';');
-
-                if (inputArray.Length > 0)
-                {
-                    this.timeStamp = inputArray[0];
-                    var i = 0;
-                    this.channelValue = new string[inputArray.Length - 1];
-
-                    foreach (var value in inputArray)
-                    {
-                        if (i > 0)
-                        {
-                            this.channelValue[i - 1] = value;
-                        }
-
-                        i++;
-                    }
-                }
             }
         }
 
         public void OnNewData()
         {
             this.NewDataArrived?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool TryGetValues(string inputText, out string[] values)
+        {
+            var inputArray = inputText.Split(';');
+
+            if (inputArray.Length > 0)
+            {
+                this.timeStamp = inputArray[0];
+                var i = 0;
+                this.channelValue = new string[inputArray.Length - 1];
+
+                foreach (var value in inputArray)
+                {
+                    if (i > 0)
+                    {
+                        this.channelValue[i - 1] = value;
+                    }
+
+                    i++;
+                }
+                values = this.channelValue;
+                return true;
+            }
+
+            values = null;
+            return false;
         }
 
         public int Interval => this.interval;
