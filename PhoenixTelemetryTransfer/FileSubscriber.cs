@@ -93,7 +93,8 @@
                     }
 
                     i++;
-                } 
+                }
+
                 values = this.channelValue;
                 return true;
             }
