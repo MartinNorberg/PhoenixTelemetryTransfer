@@ -17,10 +17,13 @@ namespace PhoenixTelemetryTransfer
     /// </summary>
     public class ViewModel : INotifyPropertyChanged
     {
+        private FileSubscriber fileSubscriber;
+        private string action = "Start";
         private string path;
         private ObservableCollection<Channel> channels;
         private int selectedNoChannels;
         private int[] noChannels;
+        private bool isStarted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class.
@@ -32,6 +35,35 @@ namespace PhoenixTelemetryTransfer
             this.TryCatch(() => this.LoadConfig());
             this.BrowseCommand = new RelayCommand(_ => this.TryCatch(() => this.BrowsePath()));
             this.OnPropertyChanged(nameof(this.NoChannels));
+            this.StartCommand = new RelayCommand(_ => this.TryCatch(() =>
+            {
+                if (this.isStarted)
+                {
+                    if (this.fileSubscriber != null)
+                    {
+                        this.fileSubscriber.Stop();
+                        this.fileSubscriber.NewDataArrived -= this.FileSubscriber_NewDataArrived;
+                        this.fileSubscriber = null;
+                    }
+
+                    this.action = "Stop";
+                    this.OnPropertyChanged(nameof(this.Action));
+                    this.isStarted = false;
+                    return;
+                }
+
+                this.fileSubscriber = new FileSubscriber(this.path, 10);
+                this.fileSubscriber.NewDataArrived += this.FileSubscriber_NewDataArrived;
+                this.fileSubscriber.Start();
+                this.action = "Stop";
+                this.OnPropertyChanged(nameof(this.Action));
+                this.isStarted = true;
+            }));
+        }
+
+        private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -53,6 +85,21 @@ namespace PhoenixTelemetryTransfer
                 }
 
                 this.noChannels = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string Action
+        {
+            get => this.action;
+            set
+            {
+                if (value == this.action)
+                {
+                    return;
+                }
+
+                this.action = value;
                 this.OnPropertyChanged();
             }
         }

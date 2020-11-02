@@ -106,5 +106,14 @@
                 Assert.AreEqual(20.02, double.Parse(result[19]));
             }
         }
+
+        /// <summary>
+        /// Filesubscriber should raise an event.
+        /// </summary>
+        [TestMethod]
+        public void EventShouldBeRaisedOnNewData()
+        {
+
+        }
     }
 }

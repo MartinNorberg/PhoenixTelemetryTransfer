@@ -45,6 +45,12 @@
                     SelectionChanged="ComboBox_SelectionChanged" />
             </StackPanel>
         </StackPanel>
+        <Button
+            Width="50"
+            Height="25"
+            HorizontalAlignment="Left"
+            Command="{Binding StartCommand}"
+            Content="{Binding Action}" />
         <TabControl Grid.Row="1" Background="HotPink">
             <TabItem Header="Channels">
                 <DataGrid ItemsSource="{Binding Channels}" />
