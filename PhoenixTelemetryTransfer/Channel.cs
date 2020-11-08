@@ -2,7 +2,9 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Configuration;
     using System.Runtime.CompilerServices;
+    using System.Windows;
 
     public class Channel : INotifyPropertyChanged
     {
@@ -93,7 +95,10 @@
                 }
 
                 this.tag = value;
+                //Måste finnas bättre sätt än detta....
                 this.OnPropertyChanged();
+                UpdateSetting(channelName + "OpcTag", value);
+
             }
         }
 
@@ -102,6 +107,14 @@
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private void UpdateSetting(string key, string value)
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save();
+
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }

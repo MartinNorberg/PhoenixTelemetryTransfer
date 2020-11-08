@@ -67,6 +67,7 @@
             if (File.Exists(this.path))
             {
                 var inputText = File.ReadAllText(this.path);
+                TryGetValues(inputText, out string[] values);
             }
         }
 
@@ -96,6 +97,7 @@
                 }
 
                 values = this.channelValue;
+                OnNewData();
                 return true;
             }
 

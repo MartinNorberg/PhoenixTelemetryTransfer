@@ -8,7 +8,9 @@ namespace PhoenixTelemetryTransfer
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Configuration;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
+    using System.Windows;
     using System.Windows.Input;
     using Ookii.Dialogs.Wpf;
 
@@ -24,6 +26,8 @@ namespace PhoenixTelemetryTransfer
         private int selectedNoChannels;
         private int[] noChannels;
         private bool isStarted;
+        private OPC_client opcClient;
+        private string opc_Tag; // test
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class.
@@ -46,24 +50,47 @@ namespace PhoenixTelemetryTransfer
                         this.fileSubscriber = null;
                     }
 
-                    this.action = "Stop";
+                    this.action = "Start";
                     this.OnPropertyChanged(nameof(this.Action));
                     this.isStarted = false;
+                    
                     return;
                 }
 
-                this.fileSubscriber = new FileSubscriber(this.path, 10);
+                this.fileSubscriber = new FileSubscriber(this.path + @"\logg.txt", 1);
                 this.fileSubscriber.NewDataArrived += this.FileSubscriber_NewDataArrived;
                 this.fileSubscriber.Start();
                 this.action = "Stop";
                 this.OnPropertyChanged(nameof(this.Action));
                 this.isStarted = true;
+
+                this.opcClient = new OPC_client();
+                this.opcClient.OpcUrl = "opcda://localhost/Matrikon.OPC.Simulation.1";
+                this.opcClient.Connect();
+                this.opcClient.CreateOPC_Group();
             }));
+
+            //*****************************
+            //UpdateSetting("Channel1OpcTag", "testead");
+
         }
 
         private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            this.TryCatch(() => {
+                if (fileSubscriber.IsStarted)
+                {
+                    for (int i = 0; i < fileSubscriber.ChannelValue.Length - 1; i++)
+                    {
+                        this.channels[i].Value = fileSubscriber.ChannelValue[i];
+                        this.channels[i].TimeStamp = DateTime.Parse(fileSubscriber.TimeStamp);
+                        //Enbart test var channelName = $"Channel{i}";
+                        this.opcClient.WriteData("Tele.Channel" + (i+1).ToString(), double.Parse(this.channels[i].Value));
+                    }
+                }
+                
+            });
+
         }
 
         /// <summary>
@@ -140,6 +167,7 @@ namespace PhoenixTelemetryTransfer
         /// <summary>
         /// Gets or sets a list of channels.
         /// </summary>
+        
         public ObservableCollection<Channel> Channels
         {
             get => this.channels;
@@ -152,6 +180,7 @@ namespace PhoenixTelemetryTransfer
 
                 this.channels = value;
                 this.OnPropertyChanged();
+
             }
         }
 
@@ -224,7 +253,6 @@ namespace PhoenixTelemetryTransfer
                     this.channels.RemoveAt(this.channels.Count - 1);
                 }
             }
-
             this.LoadConfig();
         }
 

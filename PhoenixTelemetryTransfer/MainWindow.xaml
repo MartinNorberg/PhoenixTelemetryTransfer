@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <Window.DataContext>
-        <local:ViewModel />
+        <local:ViewModel/>
     </Window.DataContext>
 
     <Grid>
@@ -53,7 +53,7 @@
             Content="{Binding Action}" />
         <TabControl Grid.Row="1" Background="HotPink">
             <TabItem Header="Channels">
-                <DataGrid ItemsSource="{Binding Channels}" />
+                <DataGrid ItemsSource="{Binding Channels, UpdateSourceTrigger=PropertyChanged}" />
             </TabItem>
             <TabItem Header="Config" />
             <TabItem Header="Exceptions">
