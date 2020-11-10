@@ -57,7 +57,7 @@ namespace PhoenixTelemetryTransfer
                     return;
                 }
 
-                this.fileSubscriber = new FileSubscriber(this.path + @"\logg.txt", 1);
+                this.fileSubscriber = new FileSubscriber($@"{this.path}\logg.txt", 1);
                 this.fileSubscriber.NewDataArrived += this.FileSubscriber_NewDataArrived;
                 this.fileSubscriber.Start();
                 this.action = "Stop";
