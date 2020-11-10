@@ -22,12 +22,12 @@ namespace PhoenixTelemetryTransfer
         private FileSubscriber fileSubscriber;
         private string action = "Start";
         private string path;
+        private string opcUrl;
         private ObservableCollection<Channel> channels;
         private int selectedNoChannels;
         private int[] noChannels;
         private bool isStarted;
         private OPC_client opcClient;
-        private string opc_Tag; // test
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class.
@@ -65,7 +65,7 @@ namespace PhoenixTelemetryTransfer
                 this.isStarted = true;
 
                 this.opcClient = new OPC_client();
-                this.opcClient.OpcUrl = "opcda://localhost/Matrikon.OPC.Simulation.1";
+                this.opcClient.OpcUrl = this.opcUrl;
                 this.opcClient.Connect();
                 this.opcClient.CreateOPC_Group();
             }));
@@ -75,24 +75,6 @@ namespace PhoenixTelemetryTransfer
         /// EventHandler.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
-        {
-            this.TryCatch(() =>
-            {
-                if (this.fileSubscriber.IsStarted)
-                {
-                    for (int i = 0; i < this.fileSubscriber.ChannelValue.Length - 1; i++)
-                    {
-                        this.channels[i].Value = this.fileSubscriber.ChannelValue[i];
-                        this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
-
-                        // Enbart test var channelName = $"Channel{i}";
-                        this.opcClient.WriteData("Tele.Channel" + (i + 1).ToString(), double.Parse(this.channels[i].Value));
-                    }
-                }
-            });
-        }
 
         /// <summary>
         /// Gets or sets the number of channels to be used.
@@ -144,6 +126,25 @@ namespace PhoenixTelemetryTransfer
                 }
 
                 this.path = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets Opc url.
+        /// </summary>
+        public string OpcUrl
+        {
+            get => this.opcUrl;
+            set
+            {
+                if (value == this.opcUrl)
+                {
+                    return;
+                }
+
+                this.opcUrl = value;
+                this.UpdateSetting(nameof(this.OpcUrl), value);
                 this.OnPropertyChanged();
             }
         }
@@ -271,6 +272,7 @@ namespace PhoenixTelemetryTransfer
         private void LoadConfig()
         {
             this.Path = ConfigurationManager.AppSettings["Path"].ToString();
+            this.OpcUrl = ConfigurationManager.AppSettings["OpcUrl"].ToString();
             if (int.TryParse(ConfigurationManager.AppSettings["NoChannels"].ToString(), out var savedNoChannels))
             {
                 this.SelectedNoChannels = savedNoChannels;
@@ -304,6 +306,24 @@ namespace PhoenixTelemetryTransfer
             configuration.Save();
 
             ConfigurationManager.RefreshSection("appSettings");
+        }
+
+        private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
+        {
+            this.TryCatch(() =>
+            {
+                if (this.fileSubscriber.IsStarted)
+                {
+                    for (int i = 0; i < this.fileSubscriber.ChannelValue.Length - 1; i++)
+                    {
+                        this.channels[i].Value = this.fileSubscriber.ChannelValue[i];
+                        this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
+
+                        // Enbart test var channelName = $"Channel{i}";
+                        this.opcClient.WriteData("Tele.Channel" + (i + 1).ToString(), double.Parse(this.channels[i].Value));
+                    }
+                }
+            });
         }
     }
 }

@@ -9,10 +9,11 @@
     Width="800"
     Height="450"
     Background="AliceBlue"
+    Closing="Window_Closing"
     mc:Ignorable="d">
 
     <Window.DataContext>
-        <local:ViewModel/>
+        <local:ViewModel />
     </Window.DataContext>
 
     <Grid>
@@ -36,6 +37,15 @@
                     Height="25"
                     Command="{Binding BrowseCommand}"
                     Content="..." />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>OpcUrl:</Label>
+                <TextBlock
+                    Width="200"
+                    Height="25"
+                    HorizontalAlignment="Left"
+                    Background="White"
+                    Text="{Binding OpcUrl}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>No channels</Label>

@@ -16,5 +16,9 @@
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+        }
     }
 }
