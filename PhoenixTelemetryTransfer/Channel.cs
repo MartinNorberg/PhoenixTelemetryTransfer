@@ -19,6 +19,8 @@
 
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string ChannelName
         {
             get => this.channelName;
@@ -48,6 +50,7 @@
 
                 this.name = value;
                 this.OnPropertyChanged();
+                this.UpdateSetting($"{this.channelName}Name", value);
             }
         }
 
@@ -95,19 +98,16 @@
                 }
 
                 this.tag = value;
-                //Måste finnas bättre sätt än detta....
                 this.OnPropertyChanged();
-                UpdateSetting(channelName + "OpcTag", value);
-
+                this.UpdateSetting($"{this.channelName}OpcTag", value);
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
         private void UpdateSetting(string key, string value)
         {
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);

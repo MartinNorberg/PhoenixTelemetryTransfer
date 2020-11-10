@@ -60,6 +60,6 @@ namespace PhoenixTelemetryTransfer
 
         public string OpcUrl { get => this.opcUrl; set => this.opcUrl = value; }
 
-        //public string TimeStamp { get => this.timeStamp; set => this.timeStamp = value; }
+        // public string TimeStamp { get => this.timeStamp; set => this.timeStamp = value; }
     }
 }

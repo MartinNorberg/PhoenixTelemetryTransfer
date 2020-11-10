@@ -53,7 +53,7 @@ namespace PhoenixTelemetryTransfer
                     this.action = "Start";
                     this.OnPropertyChanged(nameof(this.Action));
                     this.isStarted = false;
-                    
+
                     return;
                 }
 
@@ -69,34 +69,30 @@ namespace PhoenixTelemetryTransfer
                 this.opcClient.Connect();
                 this.opcClient.CreateOPC_Group();
             }));
-
-            //*****************************
-            //UpdateSetting("Channel1OpcTag", "testead");
-
-        }
-
-        private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
-        {
-            this.TryCatch(() => {
-                if (fileSubscriber.IsStarted)
-                {
-                    for (int i = 0; i < fileSubscriber.ChannelValue.Length - 1; i++)
-                    {
-                        this.channels[i].Value = fileSubscriber.ChannelValue[i];
-                        this.channels[i].TimeStamp = DateTime.Parse(fileSubscriber.TimeStamp);
-                        //Enbart test var channelName = $"Channel{i}";
-                        this.opcClient.WriteData("Tele.Channel" + (i+1).ToString(), double.Parse(this.channels[i].Value));
-                    }
-                }
-                
-            });
-
         }
 
         /// <summary>
         /// EventHandler.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void FileSubscriber_NewDataArrived(object sender, EventArgs e)
+        {
+            this.TryCatch(() =>
+            {
+                if (this.fileSubscriber.IsStarted)
+                {
+                    for (int i = 0; i < this.fileSubscriber.ChannelValue.Length - 1; i++)
+                    {
+                        this.channels[i].Value = this.fileSubscriber.ChannelValue[i];
+                        this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
+
+                        // Enbart test var channelName = $"Channel{i}";
+                        this.opcClient.WriteData("Tele.Channel" + (i + 1).ToString(), double.Parse(this.channels[i].Value));
+                    }
+                }
+            });
+        }
 
         /// <summary>
         /// Gets or sets the number of channels to be used.
@@ -116,6 +112,9 @@ namespace PhoenixTelemetryTransfer
             }
         }
 
+        /// <summary>
+        /// Gets or sets text for start button.
+        /// </summary>
         public string Action
         {
             get => this.action;
@@ -167,7 +166,6 @@ namespace PhoenixTelemetryTransfer
         /// <summary>
         /// Gets or sets a list of channels.
         /// </summary>
-        
         public ObservableCollection<Channel> Channels
         {
             get => this.channels;
@@ -180,7 +178,6 @@ namespace PhoenixTelemetryTransfer
 
                 this.channels = value;
                 this.OnPropertyChanged();
-
             }
         }
 
@@ -253,6 +250,7 @@ namespace PhoenixTelemetryTransfer
                     this.channels.RemoveAt(this.channels.Count - 1);
                 }
             }
+
             this.LoadConfig();
         }
 
