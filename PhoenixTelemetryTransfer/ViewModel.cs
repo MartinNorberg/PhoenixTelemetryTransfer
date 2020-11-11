@@ -63,9 +63,8 @@ namespace PhoenixTelemetryTransfer
                 this.action = "Stop";
                 this.OnPropertyChanged(nameof(this.Action));
                 this.isStarted = true;
-
-                this.opcClient = new OPC_client();
-                this.opcClient.OpcUrl = this.opcUrl;
+                this.opcClient?.Dispose();
+                this.opcClient = new OPC_client(this.opcUrl);
                 this.opcClient.Connect();
                 this.opcClient.CreateOPC_Group();
             }));

@@ -1,44 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Opc;
-using Opc.Da;
-
-namespace PhoenixTelemetryTransfer
+﻿namespace PhoenixTelemetryTransfer
 {
-    public class OPC_client
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Opc;
+    using Opc.Da;
+
+    public sealed class OPC_client : IDisposable
     {
         private Subscription groupWrite;
-        private SubscriptionState OPC_Group;
+        private SubscriptionState opcGroup;
         private Opc.Da.Server server;
         private string opcUrl;
         private OpcCom.Factory fact = new OpcCom.Factory();
         private List<Item> itemsList = new List<Item>();
+        private bool disposed;
 
-        public OPC_client()
+        public OPC_client(string opcUrl)
         {
-
+            this.opcUrl = opcUrl;
         }
 
         public void Connect()
         {
+            this.server?.Dispose();
             this.server = new Opc.Da.Server(this.fact, null);
-            this.server.Url = new Opc.URL(opcUrl); 
+            this.server.Url = new URL(this.opcUrl);
             this.server.Connect();
         }
 
         public void CreateOPC_Group()
         {
-            this.OPC_Group = new Opc.Da.SubscriptionState();
-            this.OPC_Group.Name = "WriteGroup";
-            this.OPC_Group.Active = false;
-            this.groupWrite = (Opc.Da.Subscription)this.server.CreateSubscription(this.OPC_Group);
+            this.opcGroup = new SubscriptionState();
+            this.opcGroup.Name = "WriteGroup";
+            this.opcGroup.Active = false;
+            this.groupWrite?.Dispose();
+            this.groupWrite = (Opc.Da.Subscription)this.server.CreateSubscription(this.opcGroup);
         }
+
         public void WriteData(string itemName, double value)
         {
-            groupWrite.RemoveItems(groupWrite.Items);
+            this.groupWrite.RemoveItems(this.groupWrite.Items);
             List<Item> writeList = new List<Item>();
             List<ItemValue> valueList = new List<ItemValue>();
 
@@ -50,16 +54,37 @@ namespace PhoenixTelemetryTransfer
             writeList.Add(itemToWrite);
             valueList.Add(itemValue);
 
-            groupWrite.AddItems(writeList.ToArray());
+            this.groupWrite.AddItems(writeList.ToArray());
 
             for (int i = 0; i < valueList.Count; i++)
-                valueList[i].ServerHandle = groupWrite.Items[i].ServerHandle;
+            {
+                valueList[i].ServerHandle = this.groupWrite.Items[i].ServerHandle;
+            }
 
-            groupWrite.Write(valueList.ToArray());
+            this.groupWrite.Write(valueList.ToArray());
         }
 
-        public string OpcUrl { get => this.opcUrl; set => this.opcUrl = value; }
+        public string OpcUrl { get => this.opcUrl; }
 
-        // public string TimeStamp { get => this.timeStamp; set => this.timeStamp = value; }
+        public void Dispose()
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.disposed = true;
+            this.groupWrite?.Dispose();
+            this.server?.Dispose();
+            this.fact.Dispose();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (this.disposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+        }
     }
 }
