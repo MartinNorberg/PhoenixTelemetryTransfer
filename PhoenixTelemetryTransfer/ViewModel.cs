@@ -8,9 +8,7 @@ namespace PhoenixTelemetryTransfer
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Configuration;
-    using System.Reflection;
     using System.Runtime.CompilerServices;
-    using System.Windows;
     using System.Windows.Input;
     using Ookii.Dialogs.Wpf;
 
@@ -27,7 +25,7 @@ namespace PhoenixTelemetryTransfer
         private int selectedNoChannels;
         private int[] noChannels;
         private bool isStarted;
-        private OPC_client opcClient;
+        private OpcClient opcClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class.
@@ -64,7 +62,7 @@ namespace PhoenixTelemetryTransfer
                 this.OnPropertyChanged(nameof(this.Action));
                 this.isStarted = true;
                 this.opcClient?.Dispose();
-                this.opcClient = new OPC_client(this.opcUrl);
+                this.opcClient = new OpcClient(this.opcUrl);
                 this.opcClient.Connect();
                 this.opcClient.CreateOPC_Group();
             }));

@@ -2,13 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Opc;
     using Opc.Da;
 
-    public sealed class OPC_client : IDisposable
+    public sealed class OpcClient : IDisposable
     {
         private Subscription groupWrite;
         private SubscriptionState opcGroup;
@@ -18,7 +15,7 @@
         private List<Item> itemsList = new List<Item>();
         private bool disposed;
 
-        public OPC_client(string opcUrl)
+        public OpcClient(string opcUrl)
         {
             this.opcUrl = opcUrl;
         }
