@@ -309,16 +309,23 @@ namespace PhoenixTelemetryTransfer
         {
             this.TryCatch(() =>
             {
-                if (this.fileSubscriber.IsStarted)
+                if (fileSubscriber.IsStarted)
                 {
-                    for (int i = 0; i < this.fileSubscriber.ChannelValue.Length - 1; i++)
-                    {
-                        this.channels[i].Value = this.fileSubscriber.ChannelValue[i];
-                        this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
 
-                        // Enbart test var channelName = $"Channel{i}";
-                        this.opcClient.WriteData("Tele.Channel" + (i + 1).ToString(), double.Parse(this.channels[i].Value));
+                    var i = 0;
+                    foreach (var value in fileSubscriber.ChannelValue)
+                    {
+                        if (i >= this.selectedNoChannels)
+                        {
+                            return;
+                        }
+                        this.channels[i].Value = fileSubscriber.ChannelValue[i].Trim();
+                        this.channels[i].TimeStamp = DateTime.Parse(fileSubscriber.TimeStamp);
+                        this.opcClient.AddItems(this.channels[i].Tag, double.Parse(this.channels[i].Value));
+                        i++;
                     }
+                    this.opcClient.WriteGroupData();
+                    
                 }
             });
         }
