@@ -1,4 +1,8 @@
-﻿namespace PhoenixTelemetryTransfer
+﻿// <copyright file="OpcClient.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace PhoenixTelemetryTransfer
 {
     using System;
     using System.Collections.Generic;
@@ -7,10 +11,10 @@
 
     public sealed class OpcClient : IDisposable
     {
+        private readonly string opcUrl;
         private Subscription groupWrite;
         private SubscriptionState opcGroup;
         private Opc.Da.Server server;
-        private string opcUrl;
         private OpcCom.Factory fact = new OpcCom.Factory();
         private List<Item> itemsList = new List<Item>();
         private List<ItemValue> itemValuesList = new List<ItemValue>();
@@ -20,6 +24,8 @@
         {
             this.opcUrl = opcUrl;
         }
+
+        public string OpcUrl { get => this.opcUrl; }
 
         public void Connect()
         {
@@ -37,6 +43,7 @@
             this.groupWrite?.Dispose();
             this.groupWrite = (Opc.Da.Subscription)this.server.CreateSubscription(this.opcGroup);
         }
+
         public void AddItems(string name, double value)
         {
             Item itemname = new Item();
@@ -46,17 +53,17 @@
             ItemValue itemValue = new ItemValue(itemname);
             itemValue.Value = value;
             this.itemValuesList.Add(itemValue);
-
         }
+
         public void WriteGroupData()
         {
-            this.groupWrite.AddItems(itemsList.ToArray());
-            this.groupWrite.Write(itemValuesList.ToArray());
+            this.groupWrite.AddItems(this.itemsList.ToArray());
+            this.groupWrite.Write(this.itemValuesList.ToArray());
             this.groupWrite.RemoveItems(this.groupWrite.Items);
             this.itemsList.Clear();
             this.itemValuesList.Clear();
-            
         }
+
         public void WriteData(string itemName, double value)
         {
             this.groupWrite.RemoveItems(this.groupWrite.Items);
@@ -81,8 +88,6 @@
             this.groupWrite.Write(valueList.ToArray());
         }
 
-        public string OpcUrl { get => this.opcUrl; }
-
         public void Dispose()
         {
             if (this.disposed)
@@ -94,7 +99,6 @@
             this.groupWrite?.Dispose();
             this.server?.Dispose();
             this.fact.Dispose();
-            
         }
 
         private void ThrowIfDisposed()

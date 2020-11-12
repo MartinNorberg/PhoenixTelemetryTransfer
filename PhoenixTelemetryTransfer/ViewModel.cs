@@ -25,7 +25,9 @@ namespace PhoenixTelemetryTransfer
         private int selectedNoChannels;
         private int[] noChannels;
         private bool isStarted;
+#pragma warning disable IDISP006 // Implement IDisposable.
         private OpcClient opcClient;
+#pragma warning restore IDISP006 // Implement IDisposable.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class.
@@ -309,23 +311,23 @@ namespace PhoenixTelemetryTransfer
         {
             this.TryCatch(() =>
             {
-                if (fileSubscriber.IsStarted)
+                if (this.fileSubscriber.IsStarted)
                 {
-
                     var i = 0;
-                    foreach (var value in fileSubscriber.ChannelValue)
+                    foreach (var value in this.fileSubscriber.ChannelValue)
                     {
                         if (i >= this.selectedNoChannels)
                         {
                             return;
                         }
-                        this.channels[i].Value = fileSubscriber.ChannelValue[i].Trim();
-                        this.channels[i].TimeStamp = DateTime.Parse(fileSubscriber.TimeStamp);
+
+                        this.channels[i].Value = this.fileSubscriber.ChannelValue[i].Trim();
+                        this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
                         this.opcClient.AddItems(this.channels[i].Tag, double.Parse(this.channels[i].Value));
                         i++;
                     }
+
                     this.opcClient.WriteGroupData();
-                    
                 }
             });
         }

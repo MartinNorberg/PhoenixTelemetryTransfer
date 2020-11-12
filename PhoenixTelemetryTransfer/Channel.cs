@@ -1,10 +1,13 @@
-﻿namespace PhoenixTelemetryTransfer
+﻿// <copyright file="Channel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace PhoenixTelemetryTransfer
 {
     using System;
     using System.ComponentModel;
     using System.Configuration;
     using System.Runtime.CompilerServices;
-    using System.Windows;
 
     public class Channel : INotifyPropertyChanged
     {
@@ -16,7 +19,6 @@
 
         public Channel()
         {
-
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

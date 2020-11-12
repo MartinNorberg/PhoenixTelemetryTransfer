@@ -1,14 +1,16 @@
-﻿namespace PhoenixTelemetryTransfer
+﻿// <copyright file="FileSubscriber.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace PhoenixTelemetryTransfer
 {
     using System;
-    using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Runtime.CompilerServices;
     using System.Windows.Threading;
 
-    public class FileSubscriber
+    public class FileSubscriber : INotifyPropertyChanged
     {
         private readonly int interval;
         private readonly string path;
@@ -30,6 +32,60 @@
 
         public event EventHandler NewDataArrived;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public int Interval => this.interval;
+
+        public string[] ChannelValue
+        {
+            get => this.channelValue;
+
+            set
+            {
+                if (Equals(this.channelValue, value))
+                {
+                    return;
+                }
+
+                this.channelValue = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string TimeStamp
+        {
+            get => this.timeStamp;
+
+            set
+            {
+                if (Equals(this.timeStamp, value))
+                {
+                    return;
+                }
+
+                this.timeStamp = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public bool IsStarted
+        {
+            get => this.isStarted;
+
+            set
+            {
+                if (Equals(this.isStarted, value))
+                {
+                    return;
+                }
+
+                this.isStarted = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string Path => this.path;
+
         public void Start()
         {
             if (this.isStarted)
@@ -42,6 +98,7 @@
             this.dispatcherTimer.Interval = new TimeSpan(0, 0, this.interval);
             this.dispatcherTimer.Start();
             this.isStarted = true;
+            this.OnPropertyChanged(nameof(this.IsStarted));
         }
 
         public void Stop()
@@ -55,11 +112,7 @@
             this.dispatcherTimer.Tick -= this.DispatcherTimer_Tick;
             this.dispatcherTimer = null;
             this.isStarted = false;
-        }
-
-        private void DispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            this.ReadFile();
+            this.OnPropertyChanged(nameof(this.IsStarted));
         }
 
         public void ReadFile()
@@ -67,7 +120,7 @@
             if (File.Exists(this.path))
             {
                 var inputText = File.ReadAllText(this.path);
-                TryGetValues(inputText, out string[] values);
+                this.TryGetValues(inputText, out string[] values);
             }
         }
 
@@ -82,9 +135,9 @@
 
             if (inputArray.Length > 0)
             {
-                this.timeStamp = inputArray[0];
+                this.TimeStamp = inputArray[0];
                 var i = 0;
-                this.channelValue = new string[inputArray.Length - 1];
+                this.ChannelValue = new string[inputArray.Length - 1];
 
                 foreach (var value in inputArray)
                 {
@@ -97,7 +150,7 @@
                 }
 
                 values = this.channelValue;
-                OnNewData();
+                this.OnNewData();
                 return true;
             }
 
@@ -105,14 +158,14 @@
             return false;
         }
 
-        public int Interval => this.interval;
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-        public string Path => this.path;
-
-        public string[] ChannelValue { get => this.channelValue; set => this.channelValue = value; }
-
-        public string TimeStamp { get => this.timeStamp; set => this.timeStamp = value; }
-
-        public bool IsStarted { get => isStarted; set => isStarted = value; }
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            this.ReadFile();
+        }
     }
 }

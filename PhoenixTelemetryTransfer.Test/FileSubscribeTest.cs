@@ -1,8 +1,15 @@
-﻿namespace PhoenixTelemetryTransfer.Test
+﻿// <copyright file="FileSubscribeTest.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace PhoenixTelemetryTransfer.Test
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    /// <summary>
+    /// Tests for FileSubscriber class.
+    /// </summary>
     [TestClass]
     public class FileSubscribeTest
     {
@@ -36,9 +43,11 @@
             {
                 Assert.AreEqual(99.99, double.Parse(result[0]));
             }
-
         }
 
+        /// <summary>
+        /// TryGetValues can handle whitespaces.
+        /// </summary>
         [TestMethod]
         public void HandleBlankspace_return20_14()
         {
@@ -50,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// TryGetValues should return two values.
+        /// </summary>
         [TestMethod]
         public void ShouldReturnTwoValues()
         {
@@ -60,11 +72,13 @@
                 Assert.AreEqual(20.14, double.Parse(result[0]));
                 Assert.AreEqual(20.19, double.Parse(result[1]));
             }
-
         }
 
+        /// <summary>
+        /// TryGetValues should return correct timestamp.
+        /// </summary>
         [TestMethod]
-        public void shouldReturnTimestamp_00_01_13()
+        public void ShouldReturnTimestamp_00_01_13()
         {
             var fileSubscriber = new FileSubscriber("MyPath", 60);
 
@@ -72,11 +86,13 @@
             {
                 Assert.AreEqual("00:01:13", fileSubscriber.TimeStamp);
             }
-
         }
 
+        /// <summary>
+        /// TryGetValues should return correct values.
+        /// </summary>
         [TestMethod]
-        public void shouldReturnMaxNrOfValues()
+        public void ShouldReturnMaxNrOfValues()
         {
             var fileSubscriber = new FileSubscriber("MyPath", 60);
 
@@ -113,7 +129,6 @@
         [TestMethod]
         public void EventShouldBeRaisedOnNewData()
         {
-
         }
     }
 }

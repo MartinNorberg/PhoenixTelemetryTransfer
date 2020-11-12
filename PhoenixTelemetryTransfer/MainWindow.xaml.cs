@@ -1,4 +1,8 @@
-﻿namespace PhoenixTelemetryTransfer
+﻿// <copyright file="MainWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace PhoenixTelemetryTransfer
 {
     using System.Windows;
     using System.Windows.Controls;
