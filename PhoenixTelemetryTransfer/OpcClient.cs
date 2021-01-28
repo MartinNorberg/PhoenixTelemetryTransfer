@@ -9,7 +9,7 @@ namespace PhoenixTelemetryTransfer
     using Opc;
     using Opc.Da;
 
-    public sealed class OpcClient : IDisposable
+    public sealed class OpcClient : IOpcClient, IDisposable
     {
         private readonly string opcUrl;
         private Subscription groupWrite;
@@ -44,7 +44,7 @@ namespace PhoenixTelemetryTransfer
             this.groupWrite = (Opc.Da.Subscription)this.server.CreateSubscription(this.opcGroup);
         }
 
-        public void AddItems(string name, double value)
+        public void AddTagValue(string name, double value)
         {
             Item itemname = new Item();
             itemname.ItemName = name;
@@ -55,38 +55,34 @@ namespace PhoenixTelemetryTransfer
             this.itemValuesList.Add(itemValue);
         }
 
+        public void AddTimeStamp(string name, DateTime time)
+        {
+            Item itemname = new Item();
+            itemname.ItemName = name;
+
+            this.itemsList.Add(itemname);
+            ItemValue itemValue = new ItemValue(itemname);
+            itemValue.Value = time;
+            this.itemValuesList.Add(itemValue);
+        }
+
         public void WriteGroupData()
         {
-            this.groupWrite.AddItems(this.itemsList.ToArray());
-            this.groupWrite.Write(this.itemValuesList.ToArray());
-            this.groupWrite.RemoveItems(this.groupWrite.Items);
-            this.itemsList.Clear();
-            this.itemValuesList.Clear();
-        }
-
-        public void WriteData(string itemName, double value)
-        {
-            this.groupWrite.RemoveItems(this.groupWrite.Items);
-            List<Item> writeList = new List<Item>();
-            List<ItemValue> valueList = new List<ItemValue>();
-
-            Item itemToWrite = new Item();
-            itemToWrite.ItemName = itemName;
-            ItemValue itemValue = new ItemValue(itemToWrite);
-            itemValue.Value = value;
-
-            writeList.Add(itemToWrite);
-            valueList.Add(itemValue);
-
-            this.groupWrite.AddItems(writeList.ToArray());
-
-            for (int i = 0; i < valueList.Count; i++)
+            if (this.itemsList.Count != null && this.itemsList.Count != 0)
             {
-                valueList[i].ServerHandle = this.groupWrite.Items[i].ServerHandle;
-            }
+                this.groupWrite.AddItems(this.itemsList.ToArray());
 
-            this.groupWrite.Write(valueList.ToArray());
-        }
+
+                for (int i = 0; i < this.itemValuesList.Count; i++)
+                {
+                    this.itemValuesList[i].ServerHandle = this.groupWrite.Items[i].ServerHandle;
+                }
+                this.groupWrite.Write(this.itemValuesList.ToArray());
+                this.groupWrite.RemoveItems(this.groupWrite.Items);
+                this.itemsList.Clear();
+                this.itemValuesList.Clear();
+            }
+    }
 
         public void Dispose()
         {

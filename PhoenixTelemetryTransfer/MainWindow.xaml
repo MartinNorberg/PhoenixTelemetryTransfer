@@ -39,13 +39,15 @@
                     Content="..." />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
+                
                 <Label>OpcUrl:</Label>
                 <TextBlock
-                    Width="200"
+                    Width="300"
                     Height="25"
                     HorizontalAlignment="Left"
                     Background="White"
                     Text="{Binding OpcUrl}" />
+
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>No channels</Label>
@@ -60,8 +62,8 @@
             Height="25"
             HorizontalAlignment="Left"
             Command="{Binding StartCommand}"
-            Content="{Binding Action}" />
-        <TabControl Grid.Row="1" Background="HotPink">
+            Content="{Binding Action}" Margin="0,88,0,27" />
+        <TabControl Grid.Row="1">
             <TabItem Header="Channels">
                 <DataGrid ItemsSource="{Binding Channels, UpdateSourceTrigger=PropertyChanged}" />
             </TabItem>

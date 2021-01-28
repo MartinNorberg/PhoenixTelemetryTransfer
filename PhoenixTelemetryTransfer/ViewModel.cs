@@ -26,7 +26,7 @@ namespace PhoenixTelemetryTransfer
         private int[] noChannels;
         private bool isStarted;
 #pragma warning disable IDISP006 // Implement IDisposable.
-        private OpcClient opcClient;
+        private IOpcClient opcClient;
 #pragma warning restore IDISP006 // Implement IDisposable.
 
         /// <summary>
@@ -321,12 +321,15 @@ namespace PhoenixTelemetryTransfer
                             return;
                         }
 
+                        var currentCulture = System.Globalization.CultureInfo.InstalledUICulture;
+                        var numberFormat = (System.Globalization.NumberFormatInfo)currentCulture.NumberFormat.Clone();
+                        numberFormat.NumberDecimalSeparator = ".";
                         this.channels[i].Value = this.fileSubscriber.ChannelValue[i].Trim();
                         this.channels[i].TimeStamp = DateTime.Parse(this.fileSubscriber.TimeStamp);
-                        this.opcClient.AddItems(this.channels[i].Tag, double.Parse(this.channels[i].Value));
+                        this.opcClient.AddTagValue(this.channels[i].Tag, double.Parse(this.channels[i].Value, numberFormat));
                         i++;
                     }
-
+                    this.opcClient.AddTimeStamp("Telemetri.timestamp", DateTime.Parse(this.fileSubscriber.TimeStamp));
                     this.opcClient.WriteGroupData();
                 }
             });

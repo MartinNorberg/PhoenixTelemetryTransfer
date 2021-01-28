@@ -129,9 +129,11 @@ namespace PhoenixTelemetryTransfer
             this.NewDataArrived?.Invoke(this, EventArgs.Empty);
         }
 
+        // Format of textfile from logger is: "00:00:05, 21.1, 22.2, 21.3"  comma , separeted
+        //                                   timestamp, ch1,   ch2,  ch3
         public bool TryGetValues(string inputText, out string[] values)
         {
-            var inputArray = inputText.Split(';');
+            var inputArray = inputText.Split(',');
 
             if (inputArray.Length > 0)
             {
